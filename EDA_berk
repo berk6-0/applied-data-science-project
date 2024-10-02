@@ -1,0 +1,120 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+# load
+listings = pd.read_csv('listings.csv')
+calendar = pd.read_csv('calendar.csv.gz', compression='gzip')
+reviews = pd.read_csv('reviews.csv')
+neighbourhoods = pd.read_csv('neighbourhoods.csv')
+#  listings (3).csv.gz
+
+# headers
+print("Listings DataFrame:")
+listings.head()
+
+print("\nCalendar DataFrame:")
+print(calendar.head())
+
+print("\nReviews DataFrame:")
+print(reviews.head())
+
+print("\nNeighbourhoods DataFrame:")
+print(neighbourhoods.head())
+
+# Exploratory Data Analysis
+
+print("Listings dataset shape:", listings.shape)
+print("Calendar dataset shape:", calendar.shape)
+print("Reviews dataset shape:", reviews.shape)
+print("Neighbourhoods dataset shape:", neighbourhoods.shape)
+
+# info of each dataset
+print("\nListings Info:")
+print(listings.info())
+
+print("\nCalendar Info:")
+print(calendar.info())
+
+print("\nReviews Info:")
+print(reviews.info())
+
+print("\nNeighbourhoods Info:")
+print(neighbourhoods.info())
+
+# missing values
+print("\nMissing values in Listings:")
+print(listings.isnull().sum())
+
+print("\nMissing values in Calendar:")
+print(calendar.isnull().sum())
+
+print("\nMissing values in Reviews:")
+print(reviews.isnull().sum())
+
+print("\nMissing values in Neighbourhoods:")
+print(neighbourhoods.isnull().sum())
+
+# summary statistics
+print("\nSummary statistics for Listings:")
+print(listings.describe())
+
+print("\nSummary statistics for Calendar:")
+print(calendar.describe())
+
+print("\nSummary statistics for Reviews:")
+print(reviews.describe())
+
+print("\nSummary statistics for Neighbourhoods:")
+print(neighbourhoods.describe())
+
+plt.figure(figsize=(10, 6))
+sns.countplot(data=listings, y='neighbourhood', order=listings['neighbourhood'].value_counts().index)
+plt.title('Number of Listings by Neighbourhood')
+plt.show()
+
+plt.figure(figsize=(10, 6))
+sns.histplot(data=listings, x='price', bins=30, kde=True)
+plt.title('Price Distribution of Listings')
+plt.show()
+
+plt.figure(figsize=(10, 6))
+sns.histplot(data=calendar, x='available', kde=False)
+plt.title('Availability Distribution in Calendar')
+plt.show()
+
+numeric_listings = listings.select_dtypes(include=['float64', 'int64'])
+
+print(numeric_listings.head())
+
+plt.figure(figsize=(12, 8))
+sns.heatmap(numeric_listings.corr(), annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title('Correlation Heatmap for Listings Dataset')
+plt.show()
+
+plt.figure(figsize=(10,6))
+sns.scatterplot(data=listings, x='longitude', y='latitude', hue='price', palette='coolwarm', size='price', sizes=(40, 400), alpha=0.6)
+plt.title('Price Distribution by Location')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.show()
+
+avg_price_neighborhood = listings.groupby('neighbourhood')['price'].mean().reset_index()
+
+plt.figure(figsize=(10,6))
+sns.barplot(data=avg_price_neighborhood, x='neighbourhood', y='price', palette='viridis')
+plt.xticks(rotation=90)
+plt.title('Average Price by Neighborhood')
+plt.show()
+
+plt.figure(figsize=(12,8))
+sns.boxplot(data=listings, x='neighbourhood', y='price')
+plt.xticks(rotation=90)
+plt.title('Price Distribution by Neighborhood')
+plt.show()
+
+plt.figure(figsize=(8,6))
+sns.scatterplot(data=listings, x='availability_365', y='price', hue='price', palette='coolwarm')
+plt.title('Price vs Availability')
+plt.xlabel('Availability (Days per Year)')
+plt.ylabel('Price')
+plt.show()
